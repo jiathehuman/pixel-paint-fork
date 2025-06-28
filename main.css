@@ -61,7 +61,7 @@ body {
 	position: relative;
 	background-color: var(--blanket-background-color);
 	width: 606px;
-	height: 554px;
+	height: 530px;
 	padding-right: 20px;
 	padding-bottom: 20px;
 }
@@ -391,8 +391,8 @@ input[type="radio"] {
 
 #info-section {
 	position: fixed;
-	top: 80%;
-	right: 1%;
+	top: 15%;
+	right: 30%;
 	z-index: 1000;
 	opacity: 0;
 	background-color: none;
@@ -403,7 +403,7 @@ input[type="radio"] {
 #keyboard-shortcut-hover {
 	position: fixed;
 	right: 0%;
-	top: 99%;
+	top: 95%;
 	
   	background-color: #e9e9a2;
   	padding: 0 4px;
