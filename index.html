@@ -70,19 +70,19 @@
 			<div class="palette" id="palette-div"></div>
 			<div class="palette" id="gameboy-palette-div"></div>
 			<div id="cursor-coords-display"></div>
-			<div id="keyboard-shortcut-hover" onmouseover="Display_Keyboard_Shortcuts()" onmouseleave="Hide_Keyboard_Shortcuts()">Shortcuts</div>
+			<div id="keyboard-shortcut-hover" onmouseover="Display_Keyboard_Shortcuts()" onmouseleave="Hide_Keyboard_Shortcuts(event)" onclick="Toggle_Keyboard_Shortcuts()">Shortcuts</div>
 		</div>
-		<div id="info-section">
+		<div id="info-section" onmouseover="Display_Keyboard_Shortcuts()" onmouseleave="Hide_Keyboard_Shortcuts(event)">
 			<table id="keyboard-shortcuts">
 				<!-- Tools -->
-				<tr><td>Pencil Mode</td><td>P</td></tr>
-				<tr><td>Bucket Mode</td><td>B</td></tr>
-				<tr><td>Eraser Mode</td><td>E</td></tr>
-				<tr><td>Colorpicker Mode</td><td>V</td></tr>
-				<tr><td>Color Swap</td><td>C</td></tr>
+				<tr><td>Pencil Mode</td><td><span data-binding-display="pencil"></span></td></tr>
+				<tr><td>Bucket Mode</td><td><span data-binding-display="fill"></span></td></tr>
+				<tr><td>Eraser Mode</td><td><span data-binding-display="eraser"></span></td></tr>
+				<tr><td>Colorpicker Mode</td><td><span data-binding-display="colorpicker"></span></td></tr>
+				<tr><td>Color Swap</td><td><span data-binding-display="swapColors"></span></td></tr>
 
 				<!-- Selection -->
-				<tr><td>Selection Mode</td><td>S</td></tr>
+				<tr><td>Selection Mode</td><td><span data-binding-display="selection"></span></td></tr>
 				<tr><td>Copy Selection</td><td>Alt + Click Drag</td></tr>
 				<tr><td>Move Selection</td><td>Click Drag</td></tr>
 				<tr><td>Delete Selection</td><td>Del or Backspace</td></tr>
@@ -92,12 +92,99 @@
 				<tr><td>Copy</td><td>Ctrl + C</td></tr>
 				<tr><td>Cut</td><td>Ctrl + X</td></tr>
 				<tr><td>Paste</td><td>Ctrl + V</td></tr>
-				<tr><td>Undo</td><td>Z</td></tr>
-				<tr><td>Redo</td><td>X</td></tr>
+				<tr><td>Undo</td><td><span data-binding-display="undo"></span></td></tr>
+				<tr><td>Redo</td><td><span data-binding-display="redo"></span></td></tr>
 
 				<!-- General -->
-				<tr><td>Toggle Grid</td><td>G</td></tr>
+				<tr><td>Toggle Grid</td><td><span data-binding-display="toggleGrid"></span></td></tr>
 			</table>
+
+		<div id="keyboard-settings-panel">
+			<h3>Keyboard Settings</h3>
+			<p class="keyboard-settings-help">Click a shortcut below and press a new key to update it.</p>
+			<div class="keyboard-settings-group">
+				<h4>Tools</h4>
+				<div class="keyboard-setting-row" data-binding-row="pencil">
+					<label for="binding-input-pencil">Pencil Mode</label>
+					<div class="binding-control">
+						<input id="binding-input-pencil" class="binding-input" type="text" data-binding-action="pencil" readonly>
+						<span class="binding-error" data-binding-error="pencil"></span>
+					</div>
+				</div>
+				<div class="keyboard-setting-row" data-binding-row="fill">
+					<label for="binding-input-fill">Bucket Mode</label>
+					<div class="binding-control">
+						<input id="binding-input-fill" class="binding-input" type="text" data-binding-action="fill" readonly>
+						<span class="binding-error" data-binding-error="fill"></span>
+					</div>
+				</div>
+				<div class="keyboard-setting-row" data-binding-row="eraser">
+					<label for="binding-input-eraser">Eraser Mode</label>
+					<div class="binding-control">
+						<input id="binding-input-eraser" class="binding-input" type="text" data-binding-action="eraser" readonly>
+						<span class="binding-error" data-binding-error="eraser"></span>
+					</div>
+				</div>
+				<div class="keyboard-setting-row" data-binding-row="colorpicker">
+					<label for="binding-input-colorpicker">Colorpicker Mode</label>
+					<div class="binding-control">
+						<input id="binding-input-colorpicker" class="binding-input" type="text" data-binding-action="colorpicker" readonly>
+						<span class="binding-error" data-binding-error="colorpicker"></span>
+					</div>
+				</div>
+				<div class="keyboard-setting-row" data-binding-row="selection">
+					<label for="binding-input-selection">Selection Mode</label>
+					<div class="binding-control">
+						<input id="binding-input-selection" class="binding-input" type="text" data-binding-action="selection" readonly>
+						<span class="binding-error" data-binding-error="selection"></span>
+					</div>
+				</div>
+			</div>
+			<div class="keyboard-settings-group">
+				<h4>Editing</h4>
+				<div class="keyboard-setting-row" data-binding-row="swapColors">
+					<label for="binding-input-swap">Color Swap</label>
+					<div class="binding-control">
+						<input id="binding-input-swap" class="binding-input" type="text" data-binding-action="swapColors" readonly>
+						<span class="binding-error" data-binding-error="swapColors"></span>
+					</div>
+				</div>
+				<div class="keyboard-setting-row" data-binding-row="undo">
+					<label for="binding-input-undo">Undo</label>
+					<div class="binding-control">
+						<input id="binding-input-undo" class="binding-input" type="text" data-binding-action="undo" readonly>
+						<span class="binding-error" data-binding-error="undo"></span>
+					</div>
+				</div>
+				<div class="keyboard-setting-row" data-binding-row="redo">
+					<label for="binding-input-redo">Redo</label>
+					<div class="binding-control">
+						<input id="binding-input-redo" class="binding-input" type="text" data-binding-action="redo" readonly>
+						<span class="binding-error" data-binding-error="redo"></span>
+					</div>
+				</div>
+			</div>
+			<div class="keyboard-settings-group">
+				<h4>General</h4>
+				<div class="keyboard-setting-row" data-binding-row="toggleGrid">
+					<label for="binding-input-grid">Toggle Grid</label>
+					<div class="binding-control">
+						<input id="binding-input-grid" class="binding-input" type="text" data-binding-action="toggleGrid" readonly>
+						<span class="binding-error" data-binding-error="toggleGrid"></span>
+					</div>
+				</div>
+			</div>
+			<div class="keyboard-settings-actions">
+				<label class="binding-file-label">
+					<input type="file" id="bindings-file-input" accept="application/json">
+					Import JSON
+				</label>
+				<button type="button" class="keyboard-settings-button" id="download-bindings-button">Save JSON</button>
+				<button type="button" class="keyboard-settings-button" id="reset-bindings-button">Reset Defaults</button>
+			</div>
+		</div>
+		</div>
+
 		</div>
 		<div id="coffee-support">
 			If you want to send gratitude, you can <a href="https://buymeacoffee.com/kully" target="_blank">buy me an Americano<span class="coffee-emoji">☕️</span></a><br>
@@ -108,6 +195,7 @@
 	<script type="text/javascript" src="js/palette.js"></script>
 	<script type="text/javascript" src="js/algo.js"></script>
 	<script type="text/javascript" src="js/historyStates.js"></script>
+	<script type="text/javascript" src="js/keyboardSettings.js"></script>
 	<script type="text/javascript" src="js/eventHandlers.js"></script>
 	<script type="text/javascript" src="js/utils.js"></script>
 	<script type="text/javascript" src="js/script.js"></script>

@@ -34,7 +34,11 @@ const STATE = {
         "top": 0,
         "colorArray": [],
     },
-}
+};
+
+KeyboardSettings.init({ state: STATE });
+
+
 const PALETTE_DISPLAY = {
     nes: document.getElementById("palette-div"),
     gameboy: document.getElementById("gameboy-palette-div"),
