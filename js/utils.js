@@ -109,6 +109,8 @@ function Populate_Palette_With_Cells()
     }
 }
 
+let keyboardShortcutsPinned = false;
+
 function Populate_GBPalette_With_Cells()
 {
     const gameboyPaletteDiv = document.getElementById("gameboy-palette-div");
@@ -124,14 +126,39 @@ function Populate_GBPalette_With_Cells()
 
 function Update_Tooltip_Text()
 {
-    for(label in Tools)
-    {
-        let id = Tools[label]["button-id"];
-        let hotkey = Tools[label]["hotkey"];
+    const bindings = (typeof KeyboardSettings !== 'undefined') ? KeyboardSettings.getBindings() : null;
 
-        const btn = document.getElementById(id);
+    for (let label in Tools)
+    {
+        if (!Object.prototype.hasOwnProperty.call(Tools, label))
+            continue;
+
+        const config = Tools[label];
+        const btn = document.getElementById(config["button-id"]);
+        if (!btn)
+            continue;
+
         const tooltip = btn.children[0];
-        tooltip.innerHTML = label + "<span class='hotkeyText'>" + " (" + hotkey[3] + ")" + "</span>";
+        if (!tooltip)
+            continue;
+
+        const code = bindings && bindings[label] ? bindings[label] : config["hotkey"];
+        tooltip.innerHTML = label + "<span class='hotkeyText'> (" + Format_Hotkey_Display(code) + ")</span>";
+    }
+
+    if (bindings)
+    {
+        const undoText = document.querySelector('#undo-button .hotkeyText');
+        if (undoText)
+            undoText.textContent = '(' + Format_Hotkey_Display(bindings.undo) + ')';
+
+        const redoText = document.querySelector('#redo-button .hotkeyText');
+        if (redoText)
+            redoText.textContent = '(' + Format_Hotkey_Display(bindings.redo) + ')';
+
+        const gridText = document.querySelector('#grid-button .hotkeyText');
+        if (gridText)
+            gridText.textContent = '(' + Format_Hotkey_Display(bindings.toggleGrid) + ')';
     }
 }
 
@@ -167,14 +194,86 @@ function Get_Canvas_Pixels()
     return canvasPixels;
 }
 
-function Display_Keyboard_Shortcuts()
+function Format_Hotkey_Display(code)
 {
-  document.getElementById("info-section").style.opacity = "1";
-  document.getElementById("info-section").style.backgroundColor = "#2a2a2a";
+    if (!code)
+        return '';
+
+    if (typeof KeyboardSettings !== 'undefined' && KeyboardSettings.getDisplayLabel)
+    {
+        let label = KeyboardSettings.getDisplayLabel(code);
+        if (label)
+            return label.toUpperCase();
+    }
+
+    if (code.indexOf('Key') === 0 && code.length > 3)
+        return code.slice(3).toUpperCase();
+    if (code.indexOf('Digit') === 0 && code.length > 5)
+        return code.slice(5);
+    if (code.indexOf('Numpad') === 0 && code.length > 6)
+        return ('Num ' + code.slice(6)).toUpperCase();
+
+    return code.toUpperCase();
 }
 
-function Hide_Keyboard_Shortcuts()
+function Display_Keyboard_Shortcuts()
 {
-  document.getElementById("info-section").style.opacity = "0";
-  document.getElementById("info-section").style.backgroundColor = "none";
+  const infoSection = document.getElementById("info-section");
+  if (!infoSection)
+    return;
+
+  infoSection.style.opacity = "1";
+  infoSection.style.backgroundColor = "#2a2a2a";
+  infoSection.style.pointerEvents = "auto";
 }
+
+function Hide_Keyboard_Shortcuts(evt, force)
+{
+  if (!force && keyboardShortcutsPinned)
+    return;
+
+  const infoSection = document.getElementById("info-section");
+  if (!infoSection)
+    return;
+
+  if (!force)
+  {
+    const nextTarget = evt ? evt.relatedTarget : null;
+    if (Is_Target_Within_Keyboard_Shortcuts(nextTarget))
+      return;
+  }
+
+  infoSection.style.opacity = "0";
+  infoSection.style.backgroundColor = "none";
+  infoSection.style.pointerEvents = "none";
+}
+
+function Toggle_Keyboard_Shortcuts()
+{
+  if (keyboardShortcutsPinned)
+  {
+    keyboardShortcutsPinned = false;
+    Hide_Keyboard_Shortcuts(null, true);
+    return;
+  }
+
+  keyboardShortcutsPinned = true;
+  Display_Keyboard_Shortcuts();
+}
+
+function Is_Target_Within_Keyboard_Shortcuts(target)
+{
+  if (!target)
+    return false;
+
+  const hoverButton = document.getElementById("keyboard-shortcut-hover");
+  const infoSection = document.getElementById("info-section");
+
+  if (hoverButton && hoverButton.contains(target))
+    return true;
+  if (infoSection && infoSection.contains(target))
+    return true;
+
+  return false;
+}
+

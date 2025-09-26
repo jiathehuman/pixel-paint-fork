@@ -11,6 +11,12 @@ let previousCursorY = null;
 let lastMouseX = 0;
 let lastMouseY = 0;
 
+let ACTIVE_KEYBOARD_BINDINGS = KeyboardSettings.getBindings();
+
+KeyboardSettings.onChange(function (updatedBindings) {
+	ACTIVE_KEYBOARD_BINDINGS = updatedBindings;
+});
+
 function Copy_Selection() {
     const selection = document.getElementById("selection");
     if (STATE["activeTool"] === "selection" && selection && STATE["selection"]["isLocked"]) {
@@ -670,13 +676,13 @@ function Add_EventHandlers_To_Document()
 			Set_Cursor(Tools[STATE["activeTool"]]["cursor"]);
 			STATE["selection"]["floatingCopy"] = false;
 		}
-		if (e.code === "KeyZ" && !(e.ctrlKey || e.metaKey)) {
+		if (e.code === ACTIVE_KEYBOARD_BINDINGS["undo"] && !(e.ctrlKey || e.metaKey)) {
 			Undo();
 		}
-		if (e.code === "KeyX" && !(e.ctrlKey || e.metaKey)) {
+		if (e.code === ACTIVE_KEYBOARD_BINDINGS["redo"] && !(e.ctrlKey || e.metaKey)) {
 			Redo();
 		}
-		if (e.code === "KeyC" && !(e.ctrlKey || e.metaKey)) {
+		if (e.code === ACTIVE_KEYBOARD_BINDINGS["swapColors"] && !(e.ctrlKey || e.metaKey)) {
 			Swap_Active_Color();
 		}
 
@@ -684,8 +690,10 @@ function Add_EventHandlers_To_Document()
 			STATE["grid"]["KeyG_Counter"] += 1;
 		}
 
+		const toolBindings = ACTIVE_KEYBOARD_BINDINGS || {};
 		for (const [toolLabel, toolConfig] of Object.entries(Tools)) {
-			if (e.code === toolConfig["hotkey"]) {
+			const hotkey = toolBindings[toolLabel] || toolConfig["hotkey"];
+			if (e.code === hotkey) {
 				Activate_Tool(toolLabel);
 				Reset_Previous_Cursor_Position();
 				break;
